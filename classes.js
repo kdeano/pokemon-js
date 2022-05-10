@@ -5,26 +5,22 @@ class Sprite {
     frames = { max: 1, hold: 10 }, 
     sprites, 
     animate = false,
-    isEnemy = false,
-    rotation = 0,
-    name
+    rotation = 0
   }) {
     this.position = position
-    this.image = image
+    this.image = new Image()
     this.frames = { ...frames, val: 0, elapsed: 0 }
 
     this.image.onload = () => {
       this.width = this.image.width / this.frames.max
       this.height = this.image.height
     }
+    this.image.src = image.src
 
     this.animate = animate
     this.sprites = sprites
     this.opacity = 1
-    this.health = 100
-    this.isEnemy = isEnemy
     this.rotation = rotation
-    this.name = name
   }
 
   draw() {
@@ -55,6 +51,34 @@ class Sprite {
       else this.frames.val = 0
     }
   }
+}
+
+class Monster extends Sprite {
+  constructor({ 
+    position, 
+    image, 
+    frames = { max: 1, hold: 10 }, 
+    sprites, 
+    animate = false,
+    rotation = 0,
+    isEnemy = false, 
+    name,
+    attacks
+  }) {
+    super({
+      position, 
+      image, 
+      frames, 
+      sprites, 
+      animate,
+      rotation,
+    })
+
+    this.health = 100,
+    this.isEnemy = isEnemy,
+    this.name = name
+    this.attacks = attacks
+  }
 
   attack({ attack, recipient, renderedSprites }) {
     document.querySelector('#dialogue-box').style.display = 'block'
@@ -66,7 +90,7 @@ class Sprite {
     let rotation = 1
     if (this.isEnemy) rotation = -1
 
-    this.health -= attack.damage
+    recipient.health -= attack.damage
 
     switch (attack.name) {
       case 'Tackle':
@@ -82,8 +106,9 @@ class Sprite {
           duration: 0.1,
           onComplete: () => {
             // Enemy gets hit
+            audio.tackleHit.play()
             gsap.to(healthBar, {
-              width: this.health + '%'
+              width: recipient.health + '%'
             })
 
             gsap.to(recipient.position, {
@@ -106,6 +131,8 @@ class Sprite {
 
         break
       case 'Fireball':
+        audio.initFireball.play()
+
         const fireballImage = new Image()
         fireballImage.src = './img/fireball.png'
         
@@ -130,8 +157,9 @@ class Sprite {
           y: recipient.position.y,
           duration: 0.65,
           onComplete: () => {
+            audio.fireballHit.play()
             gsap.to(healthBar, {
-              width: this.health + '%'
+              width: recipient.health + '%'
             })
 
             gsap.to(recipient.position, {
@@ -155,6 +183,21 @@ class Sprite {
         break
     }
   }
+
+  faint() {
+    document.querySelector('#dialogue-box').innerHTML = this.name + ' fainted!'
+
+    gsap.to(this.position, {
+      y: this.position.y + 20
+    })
+
+    gsap.to(this, {
+      opacity: 0
+    })
+
+    audio.battle.stop()
+    audio.victory.play()
+  }
 }
 
 class Boundary {
@@ -167,7 +210,7 @@ class Boundary {
   }
 
   draw() {
-    ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'
+    ctx.fillStyle = 'rgba(255, 0, 0, 0)'
     ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
   }
 }

@@ -176,20 +176,25 @@ function animate() {
         // De-activate current animation loop
         window.cancelAnimationFrame(animationId)
 
+        audio.map.stop()
+        audio.initBattle.play()
+        audio.battle.play()
+
         battle.initiated = true
-        gsap.to('#flashingDiv', {
+        gsap.to('#flashing-div', {
           opacity: 1,
           repeat: 3,
           yoyo: true,
           duration: 0.4,
           onComplete() {
-            gsap.to('#flashingDiv', {
+            gsap.to('#flashing-div', {
               opacity: 1,
               duration: 0.4,
               onComplete() {
                 // Activate new animation loop
+                initBattle()
                 animateBattle()
-                gsap.to('#flashingDiv', {
+                gsap.to('#flashing-div', {
                   opacity: 0,
                   duration: 0.4
                 })
@@ -319,8 +324,6 @@ function animate() {
   }
 }
 
-// animate()
-
 let lastKey = ''
 
 window.addEventListener('keydown', (e) => {
@@ -358,5 +361,14 @@ window.addEventListener('keyup', (e) => {
     case 'd':
       keys.d.pressed = false
       break
+  }
+})
+
+// Map audio plays on click
+let clicked = false
+addEventListener('click', () => {
+  if (!clicked) {
+    audio.map.play()
+    clicked = true
   }
 })
