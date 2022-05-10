@@ -6,10 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokemon.js</title>
   <link href="styles.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <div id="flashingDiv" class="flashing-screen"></div>
+
+    <!-- Enemy health bar container -->
+    <div class="enemy-details-container">
+      <h1>Draggle</h1>
+      <div class="enemy-health-container">
+        <div class="enemy-health-bar-container"></div>
+        <div class="enemy-health-bar-green"></div>
+      </div>
+    </div>
+
+    <!-- player health bar container -->
+    <div class="player-details-container">
+      <h1>Emby</h1>
+      <div class="player-health-container">
+        <div class="player-health-bar-container"></div>
+        <div class="player-health-bar-green"></div>
+      </div>
+    </div>
     <canvas></canvas>
 
     <div class="battle-container">
